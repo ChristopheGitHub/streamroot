@@ -5,7 +5,8 @@ var favicon      = require('serve-favicon');
 var logger       = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
-var io           = require('socket.io')(); 
+var usersCo      = require('./modules/users-connection');
+var Users        = require('./modules/users');
 
 var app = express();
 
@@ -20,14 +21,12 @@ app.use(cookieParser());
 app.use(serveStatic('public', {}));
 
 app.get('*', function (req, res, next) {
-  res.sendfile(__dirname + '/public/views/index.html'); // Renvoie le fichier index de la SPA.
-});
-
-io.sockets.on('connection', function(socket){
-  console.log('CONNNNNNNECTION');
+  res.sendfile(__dirname + '/public/views/index.html');
 });
 
 
 var server = app.listen(9000);
 
-io.listen(server);
+var users = new Users();
+
+var usersCo = new usersCo(server, users);

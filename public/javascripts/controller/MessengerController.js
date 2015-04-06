@@ -1,3 +1,3 @@
-app.controller('LoginController', function() {
+app.controller('MessengerController', function() {
 	console.log('login');
 });
