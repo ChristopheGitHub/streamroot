@@ -1,13 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="chat">
 <head>
 	<meta charset="UTF-8">
 	<title>Chat</title>
 
 	<script src="vendor/socket.io-client/socket.io.js"></script>
-	<script src="javascripts/io-test.js"></script>
+	<script src="vendor/angular/angular.js"></script>
+	<script src="vendor/angular-ui-router/angular-ui-router.js"></script>
+
+	<script src="javascripts/app.js"></script>
+
+	<!-- Service -->
+	<script src="javascripts/service/SocketService.js"></script>
+
+
+	<!-- Controller -->
+	<script src="javascripts/controller/LoginController.js"></script>
+	<script src="javascripts/controller/MessengerController.js"></script>
+
 </head>
 <body>
-	<h1>Bonjour</h1>
+	<ui-view></ui-view>	
 </body>
 </html>
