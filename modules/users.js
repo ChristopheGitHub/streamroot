@@ -22,11 +22,7 @@ Users.prototype.addUser = function (data, callback) {
 };
 
 Users.prototype.isLoginTaken = function(login) {
-	if(login in this._users){
-		return true;
-	} else {
-		return false;
-	}
+	return (login in this._users) ? true : false;
 };
 
 Users.prototype.getList = function(){
