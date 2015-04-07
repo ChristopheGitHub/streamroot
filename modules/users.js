@@ -5,30 +5,25 @@ var Users = function () {
 		return new Users();
 	}
 
-	this._users = [];
+	this._users = {};
 };
 
 Users.prototype.addUser = function (login, callback) {	
 	if (this.isLoginTaken(login)) {
 		return callback(new Error('loginTaken'));
 	} else {
-		var _user = {
-			login: login
-		};
-
-		this._users.push(_user);
+		var _user = {};
+		this._users[login] = _user;
 		return callback(null);
 	}
 };
 
 Users.prototype.isLoginTaken = function(login) {
-	if(this._users.length > 0) {
-		for (var i = 0; i < this._users.length; i++) {
-			if (this._users[i].login == login)
-				return true ;
-		}
+	if(login in this._users){
+		return true;
+	} else {
+		return false;
 	}
-	return false;
 };
 
 module.exports = Users;
