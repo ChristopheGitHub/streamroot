@@ -35,7 +35,13 @@
                 <div class="row">
                     <tabset justified="true">
                         <tab ng-repeat="conv in conversations" heading="{{ conv.title }}">
-                            
+                            <div class="messages"></div>
+                            <form class="form-inline chat-input">
+                                <!-- <div class="form-group"> -->
+                                    <input type="text" class="form-control" ng-model="message">
+                                    <button type="submit" ng-click="send(message)" class="btn btn-default">Send</button>
+                                <!-- </div> -->
+                            </form>
                         </tab>
                     </tabset>
                 </div>
