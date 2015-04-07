@@ -6,6 +6,8 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 
 	$scope.directory = null;
 
+	$scope.conversations = [];
+
 	console.log($scope.user.username);	
 	console.log($scope.user.peerId);
 
@@ -29,8 +31,12 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 		console.log($scope.directory);
 	};
 
-	createConversation = function(user){
-		
+	$scope.createConversation = function(user){
+		console.log('createConversation');
+		var conversation = {
+			title: user.username
+		};
+		$scope.conversations.push(conversation);
 	};
 
 });

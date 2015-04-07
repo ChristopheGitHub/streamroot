@@ -11,7 +11,7 @@
                     <input type="text" class="form-control" ng-model="query">
                 </li>
                 <li ng-repeat="user in directory | PeopleFilter:query">
-                    <a ng-click="startConversation(user)">{{ user.username }}</a>
+                    <a ng-click="createConversation(user)">> {{ user.username }}</a>
                 </li>
             </ul>
         </div>
@@ -22,9 +22,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <tabset justified="true">
-                        <tab heading="Justified">Justified content</tab>
-                        <tab heading="SJ">Short Labeled Justified content</tab>
-                        <tab heading="Long Justified">Long Labeled Justified content</tab>
+                        <tab ng-repeat="conv in conversations" heading="{{ conv.title }}"></tab>
                     </tabset>
                 </div>
             </div>
