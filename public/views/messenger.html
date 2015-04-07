@@ -1,17 +1,29 @@
  <div id="wrapper">
         <!-- Sidebar -->
         <div id="sidebar-wrapper">
-            <ul class="sidebar-nav">
+            <ul class="sidebar-nav list-group">
                 <li class="sidebar-brand">
-                    <a>
-                        People online
-                    </a>
+                    <a>People online</a>
                 </li>
                 <li>
-                    <input type="text" class="form-control" ng-model="query">
+                    <input type="text" class="form-control" ng-model="query" placeholder="Search">
                 </li>
-                <li ng-repeat="user in directory | PeopleFilter:query">
-                    <a ng-click="createConversation(user)">> {{ user.username }}</a>
+                <li ng-repeat="user in directory | PeopleFilter:{name:query, banned: 'false'}"
+                    class="list-group-item">
+                    <span ng-click="createConversation(user)">> {{ user.username }}</span>
+                    <button class="btn btn-xs pull-right" ng-click="switchBan(user)">
+                        <span>Ban</span>
+                    </button>
+                </li>
+                <li class="sidebar-brand">
+                    <a>People banned</a>
+                </li>
+                <li ng-repeat="user in directory | PeopleFilter:{name:query, banned: 'true'}"
+                class="list-group-item">
+                     <span>> {{ user.username }}</span>
+                    <button class="btn btn-xs pull-right" ng-click="switchBan(user)">
+                        <span>Unban</span>
+                    </button>
                 </li>
             </ul>
         </div>

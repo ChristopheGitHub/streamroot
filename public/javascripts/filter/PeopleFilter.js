@@ -7,15 +7,14 @@ angular.module('chat').filter('PeopleFilter', function(){
 	};
 
 	return function(input, query) {
-		if(!query) {
-			return input;
-		}
-
 		var res = [];
 
 		angular.forEach(input, function(person){
-			if(compare(person.username, query))
-				res.push(person);
+			if(person.banned === query.banned) {	
+				if(compare(person.username, query.name)){
+					res.push(person);
+				}
+			}
 		});
 
 		return res;

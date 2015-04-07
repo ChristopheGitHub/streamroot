@@ -6,9 +6,39 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 	$scope.directory = null;
 	$scope.conversations = [];
 
+	// To remember who's banned when the directory is updated
+	var banned = [];
+
 	console.log($scope.user.username);	
 	console.log($scope.user.peerId);
 	console.log($scope.peer);
+
+	var setBanned = function(){
+		angular.forEach($scope.directory, function(user){
+			if(banned.indexOf(user.username) !== -1){
+				user.banned = 'true';
+			} else {
+				user.banned = 'false';
+			}
+		});
+	};
+
+	$scope.switchBan = function(user){
+		user.banned = (user.banned == 'true') ? 'false' : 'true';
+		if (user.banned) {
+			banned.push(user.username);
+		} else {
+			var index = banned.indexOf(user.username);
+			banned.splice(index, 1);
+		}
+		console.log($scope.directory);
+	};
+
+	var setDirectory = function(data) {
+		delete data[$scope.user.username];
+		$scope.directory = data;
+		setBanned();
+	};
 
 	var getUserFromPeerId = function(id){
 		var res = "";
@@ -19,6 +49,8 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 		});
 		return res;
 	};
+
+	// Messages events operations
 
 	socket.emit('getList', function() {
 		console.log("Get List");
@@ -34,11 +66,7 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 		setDirectory(data);
 	});
 
-	setDirectory = function(data) {
-		delete data[$scope.user.username];
-		$scope.directory = data;
-		console.log($scope.directory);
-	};
+	// Conversations operations
 
 	$scope.createConversation = function(user){
 		console.log('createConversation');
