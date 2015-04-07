@@ -73,7 +73,8 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 		var dataConnection = $scope.peer.connect(user.peerId);
 		var conversation = {
 			title: user.username,
-			dataConnection: dataConnection
+			dataConnection: dataConnection,
+			messages: []
 		};
 		$scope.conversations.push(conversation);
 	};
@@ -83,10 +84,26 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 		console.log('user ' + user + "want to start conv");
 		var conversation = {
 			title: user,
-			dataConnection: connection
+			dataConnection: connection,
+			messages: []
 		};
 		$scope.$apply($scope.conversations.push(conversation));
 		console.log($scope.conversations);
+		
+		connection.on('data', function(message){
+			conversation.messages.push(message);
+			$scope.$apply($scope.conversations);
+		});
 	});
+
+	$scope.send = function(conversation, text){
+		var message = {
+			author: $scope.user.username,
+			text: text
+		};
+		conversation.dataConnection.send(message);
+		conversation.messages.push(message);
+		text = "";
+	};
 
 });

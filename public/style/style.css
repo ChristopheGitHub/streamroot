@@ -13,3 +13,11 @@
   overflow: auto;
   border: 1px solid #e8e7e8;
 }
+
+.message {
+  border-bottom: 1px solid #c7c7c7;
+  background: #fff;
+  height: 75px;
+  -webkit-transition: background .5s;
+  padding: 3px 3px 3px 10px;
+}
