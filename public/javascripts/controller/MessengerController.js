@@ -29,18 +29,8 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 		console.log($scope.directory);
 	};
 
-	// $scope.selectUser = function(user){
-	// 	if(!conversationExist(user)){
-	// 		createConversation(user);
-	// 	}
-	// };
-
-	// conversationExist = function(){
-	// 	return false;
-	// };
-
-	// createConversation = function(){
-
-	// };
+	createConversation = function(user){
+		
+	};
 
 });
