@@ -28,4 +28,8 @@ Users.prototype.isLoginTaken = function(login) {
 	}
 };
 
+Users.prototype.getList = function(){
+	return this._users;
+};
+
 module.exports = Users;

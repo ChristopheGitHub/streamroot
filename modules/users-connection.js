@@ -26,8 +26,15 @@ IoModule.prototype._initialize = function () {
                     socket.emit('loginNotOk');
                 } else {
                     socket.emit('loginOk');
+                    var directory = self._users.getList();
+                    socket.broadcast.emit('newUser', directory);
                 }
             });
+        });
+
+        socket.on('getList', function(){
+            var directory = self._users.getList();
+            socket.emit('directory', directory);
         });
     });
 };
