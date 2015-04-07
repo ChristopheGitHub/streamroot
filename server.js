@@ -7,6 +7,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var usersCo      = require('./modules/users-connection');
 var Users        = require('./modules/users');
+var PeerServer   = require('peer').PeerServer;
 
 var app = express();
 
@@ -17,15 +18,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 
-
 app.use(serveStatic('public', {}));
+
+var server = app.listen(9000);
+
+
+var serverPeer = PeerServer({port: 8000, path: '/peerjs'});
 
 app.get('*', function (req, res, next) {
   res.sendfile(__dirname + '/public/views/index.html');
 });
 
+serverPeer.on('connection', function(id) { console.log("Hello ! !" + id); });
 
-var server = app.listen(9000);
 
 var users = new Users();
 

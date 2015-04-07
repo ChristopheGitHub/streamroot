@@ -13,7 +13,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
 
 		.state('login', {
 			parent: 'main',
-			url: '/login',
+			// url: '/login',
 			templateUrl: 'views/login.html',
 			controller: 'LoginController'
 		})
@@ -21,7 +21,10 @@ app.config(function ($stateProvider, $urlRouterProvider) {
 		.state('messenger', {
 			parent: 'main',
 			templateUrl: 'views/messenger.html',
-			controller: 'MessengerController'
+			controller: 'MessengerController',
+			params: {
+				login: null
+			}
 		});
 });
 
