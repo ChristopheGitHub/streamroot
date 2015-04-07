@@ -62,8 +62,13 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 	});
 
 	socket.on('newUser', function (data) {
-		console.log('newUser');
-		setDirectory(data);
+		console.log('newUser' + data.newUser);
+		setDirectory(data.directory);
+	});
+
+	socket.on('user disconnected', function (data) {
+		console.log('user : ' + data.username + ' disconnected.');
+		setDirectory(data.directory);
 	});
 
 	// Conversations operations
