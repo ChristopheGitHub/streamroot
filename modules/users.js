@@ -13,6 +13,7 @@ Users.prototype.addUser = function (data, callback) {
 		return callback(new Error('loginTaken'));
 	} else {
 		var _user = {
+			username: data.login,
 			peerId: data.peerId
 		};
 		this._users[data.login] = _user;
