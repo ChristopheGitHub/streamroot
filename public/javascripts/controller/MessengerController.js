@@ -11,12 +11,18 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 
 	socket.on('directory', function (data) {
 		console.log('directory');
-		$scope.directory = data;
+		setDirectory(data);
 	});
 
 	socket.on('newUser', function (data) {
 		console.log('newUser');
-		$scope.directory = data;
+		setDirectory(data);
 	});
+
+	setDirectory = function(data) {
+		delete data[$scope.user.username];
+		$scope.directory = data;
+		console.log($scope.directory);
+	};
 
 });
