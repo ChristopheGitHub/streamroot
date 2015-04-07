@@ -23,7 +23,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
 			templateUrl: 'views/messenger.html',
 			controller: 'MessengerController',
 			params: {
-				login: null
+				user: null
 			}
 		});
 });

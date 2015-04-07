@@ -29,10 +29,6 @@ IoModule.prototype._initialize = function () {
                 }
             });
         });
-
-        socket.on('ready', function (data) {
-        	console.log('server : ' + data.login);
-        });
     });
 };
 

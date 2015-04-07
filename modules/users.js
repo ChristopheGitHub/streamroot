@@ -8,12 +8,14 @@ var Users = function () {
 	this._users = {};
 };
 
-Users.prototype.addUser = function (login, callback) {	
-	if (this.isLoginTaken(login)) {
+Users.prototype.addUser = function (data, callback) {	
+	if (this.isLoginTaken(data.login)) {
 		return callback(new Error('loginTaken'));
 	} else {
-		var _user = {};
-		this._users[login] = _user;
+		var _user = {
+			peerId: data.peerId
+		};
+		this._users[data.login] = _user;
 		return callback(null);
 	}
 };
