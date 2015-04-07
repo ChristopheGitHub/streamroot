@@ -1,15 +1,17 @@
  <div id="wrapper">
-
         <!-- Sidebar -->
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
-                    <a href="#">
+                    <a>
                         People online
                     </a>
                 </li>
-                <li ng-repeat="user in directory">
-                    <a href="#">{{ user.username }}</a>
+                <li>
+                    <input type="text" class="form-control" ng-model="query">
+                </li>
+                <li ng-repeat="user in directory | PeopleFilter:query">
+                    <a ng-click="selectUser(user)">{{ user.username }}</a>
                 </li>
             </ul>
         </div>

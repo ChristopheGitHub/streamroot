@@ -2,6 +2,10 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 
 	$scope.user = $stateParams.user;
 
+	$scope.query = "";
+
+	$scope.directory = null;
+
 	console.log($scope.user.username);	
 	console.log($scope.user.peerId);
 
@@ -24,5 +28,19 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 		$scope.directory = data;
 		console.log($scope.directory);
 	};
+
+	// $scope.selectUser = function(user){
+	// 	if(!conversationExist(user)){
+	// 		createConversation(user);
+	// 	}
+	// };
+
+	// conversationExist = function(){
+	// 	return false;
+	// };
+
+	// createConversation = function(){
+
+	// };
 
 });
