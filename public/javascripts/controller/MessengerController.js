@@ -69,26 +69,31 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 	// Conversations operations
 
 	$scope.createConversation = function(user){
-		console.log('createConversation');
 		var dataConnection = $scope.peer.connect(user.peerId);
 		var conversation = {
 			title: user.username,
 			dataConnection: dataConnection,
 			messages: []
 		};
+
 		$scope.conversations.push(conversation);
+
+		dataConnection.on('data', function(message){
+			conversation.messages.push(message);
+			$scope.$apply($scope.conversations);
+		});
 	};
 
 	$scope.peer.on('connection', function(connection){
 		var user = getUserFromPeerId(connection.peer);
-		console.log('user ' + user + "want to start conv");
 		var conversation = {
 			title: user,
 			dataConnection: connection,
 			messages: []
 		};
-		$scope.$apply($scope.conversations.push(conversation));
-		console.log($scope.conversations);
+
+		$scope.conversations.push(conversation);
+		$scope.$apply($scope.conversations);
 		
 		connection.on('data', function(message){
 			conversation.messages.push(message);
@@ -96,14 +101,14 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 		});
 	});
 
-	$scope.send = function(conversation, text){
+	$scope.send = function(){
 		var message = {
 			author: $scope.user.username,
-			text: text
+			text: this.newMessage
 		};
-		conversation.dataConnection.send(message);
-		conversation.messages.push(message);
-		text = "";
+		this.conv.dataConnection.send(message);
+		this.conv.messages.push(message);
+		this.newMessage = "";
 	};
 
 });
