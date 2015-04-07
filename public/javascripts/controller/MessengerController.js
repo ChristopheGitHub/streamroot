@@ -52,21 +52,21 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 
 	// Messages events operations
 
-	socket.emit('getList', function() {
+	socket.emit('clientAskDirectory', function() {
 		console.log("Get List");
 	});
 
-	socket.on('directory', function (data) {
-		console.log('directory');
+	socket.on('serverSendDirectory', function (data) {
+		console.log('serverSendDirectory');
 		setDirectory(data);
 	});
 
-	socket.on('newUser', function (data) {
+	socket.on('serverUserConnection', function (data) {
 		console.log('newUser' + data.newUser);
 		setDirectory(data.directory);
 	});
 
-	socket.on('user disconnected', function (data) {
+	socket.on('serverUserDisconnection', function (data) {
 		console.log('user : ' + data.username + ' disconnected.');
 		setDirectory(data.directory);
 	});

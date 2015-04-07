@@ -18,30 +18,29 @@ IoModule.prototype._initialize = function () {
     var self = this;
 
     io.sockets.on('connection', function(socket){
-        console.log('CONNECTION');
+        console.log('connection');
 
         var username = "";
 
-        socket.on('login', function (data) {
+        socket.on('clientSendUsername', function (data) {
             self._users.addUser(data, function (err) {
                 if(err){
-                    socket.emit('loginNotOk');
+                    socket.emit('serverUsernameAlreadyTaken');
                 } else {
-                    socket.emit('loginOk');
+                    socket.emit('serverUsernameSaved');
                     username = data.login;
-                    // var directory = self._users.getList();
                     var message = {
                         directory: self._users.getList(),
                         username: username
                     };
-                    socket.broadcast.emit('newUser', message);
+                    socket.broadcast.emit('serverUserConnection', message);
                 }
             });
         });
 
-        socket.on('getList', function(){
+        socket.on('clientAskDirectory', function(){
             var directory = self._users.getList();
-            socket.emit('directory', directory);
+            socket.emit('serverSendDirectory', directory);
         });
 
         socket.on('disconnect', function(){
@@ -49,7 +48,7 @@ IoModule.prototype._initialize = function () {
                 directory: self._users.getList(),
                 username: username
             };
-            io.sockets.emit('user disconnected', message);
+            io.sockets.emit('serverUserDisconnection', message);
         });
     });
 };

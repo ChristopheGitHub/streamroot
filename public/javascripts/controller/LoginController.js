@@ -18,16 +18,16 @@ app.controller('LoginController', function ($scope, $state, socket) {
 			peerId: $scope.user.peerId
 		};
 
-		socket.emit('login', data);
+		socket.emit('clientSendUsername', data);
 	};
 
-	socket.on('loginOk', function () {
-		console.log('loginOk');
+	socket.on('serverUsernameSaved', function () {
+		console.log('serverUsernameSaved');
 		$state.go('messenger', {user: $scope.user, peer: $scope.peer});
 	});
 
-	socket.on('loginNotOk', function () {
-		console.log('loginNotOk');
+	socket.on('serverUsernameAlreadyTaken', function () {
+		console.log('serverUsernameAlreadyTaken');
 	});
 
 });
