@@ -1,7 +1,7 @@
-app.controller('MessengerController', function ($scope, $stateParams, socket) {
+app.controller('MessengerController', function ($scope, $stateParams, socket, peer) {
 
 	$scope.user = $stateParams.user;
-	$scope.peer = $stateParams.peer;
+	// $scope.peer = $stateParams.peer;
 	$scope.query = "";
 	$scope.directory = null;
 	$scope.conversations = [];
@@ -10,7 +10,9 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 	var banned = [];
 
 	console.log($scope.user.username);	
-	console.log($scope.user.peerId);
+	console.log('ancien id: ' + $scope.user.peerId);
+	console.log('controller peeer id ');
+	console.log(peer);
 	console.log($scope.peer);
 
 	var setBanned = function(){
@@ -74,7 +76,7 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 	// Conversations operations
 
 	$scope.createConversation = function(user){
-		var dataConnection = $scope.peer.connect(user.peerId);
+		var dataConnection = peer.connect(user.peerId);
 		var conversation = {
 			title: user.username,
 			dataConnection: dataConnection,
@@ -85,11 +87,11 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 
 		dataConnection.on('data', function(message){
 			conversation.messages.push(message);
-			$scope.$apply($scope.conversations);
+			// $scope.$apply($scope.conversations);
 		});
 	};
 
-	$scope.peer.on('connection', function(connection){
+	peer.on('connection', function(connection){
 		var user = getUserFromPeerId(connection.peer);
 		var conversation = {
 			title: user,
@@ -98,7 +100,6 @@ app.controller('MessengerController', function ($scope, $stateParams, socket) {
 		};
 
 		$scope.conversations.push(conversation);
-		$scope.$apply($scope.conversations);
 		
 		connection.on('data', function(message){
 			conversation.messages.push(message);
