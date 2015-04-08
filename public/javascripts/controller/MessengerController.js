@@ -171,53 +171,46 @@ app.controller('MessengerController', function ($scope, $stateParams, $modal, so
 				
 				if (data.type === 'new conversation') {
 
+
+					// Set the correct conversation members for this peers pov :
+					// 	- add the sender
+					// 	- remove it self
 					var members = data.members; 
+					members.push(sender);	
+					
+					(function removeUserFromMembers() {
+						var index = null;
+						// remove it self
+						for (var i = 0; i < members.length; i++) {
+							index = (members[i].username == $scope.user.username) ? i : index;
+						}
+						members.splice(index, 1);
+					})();
 
-					// Set the correct members for this peers point of view;
-					members.push(sender);	// Add the guy who send the new conversation msg
-					var index = null;
-					// remove it self
-					for (var i = 0; i < members.length; i++) {
-						index = (members[i].username == $scope.user.username) ? i : index;
-					}
-					members.splice(index, 1);
-
-					// Create conversation title
-					var conversationTitle = createConvTitle(members);
-					console.log('conversationTitle');
-					console.log(conversationTitle);
-
+					// Create conversation
 					var conversation = {
-						title: conversationTitle,
+						title: createConvTitle(members),
 						header: data.header,
 						members: members,
 						dataConnection: [],
 						messages: []
 					};
 
-					// Push conversation in conversation collections,
-					// therefore displaying it
+					// Push conversation in conversation collections and displays it
 					$scope.$apply($scope.conversations.push(conversation));
 
-					// Save the connection
+					// Save the sender connection
 					conversation.dataConnection.push(connection);
 
-					// New array without the sender of the 'new conversation event'
-					// We're already listening him.
-					var members2 = [];
-					for (var j = 0; j < members.length; j++) {
-						if(members[j].username !== sender.username){
-							members2.push(members[j]);
+					// Connect to each other potential members of the conversation save their DataConnection.
+					angular.forEach(members, function(user){
+						if(user.username !== sender.username) {
+							// Connect to the member
+							var dataConnection = peer.connect(user.peerId);
+
+							// Save the connection
+							conversation.dataConnection.push(dataConnection);
 						}
-					}
-
-					// Connect to each members of the conversation and listen.
-					members2.map(function(user){
-						// Connect to the member
-						var dataConnection = peer.connect(user.peerId);
-
-						// Save the connection
-						conversation.dataConnection.push(dataConnection);
 					});
 
 				} else {
@@ -233,6 +226,7 @@ app.controller('MessengerController', function ($scope, $stateParams, $modal, so
 	});
 
 	$scope.send = function(){
+		// Here this refers to
 		var message = {
 			type: 'message',
 			header: this.conv.header,
