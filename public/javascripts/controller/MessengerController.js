@@ -1,4 +1,4 @@
-app.controller('MessengerController', function ($scope, $stateParams, socket, peer) {
+app.controller('MessengerController', function ($scope, $stateParams, $modal, socket, peer) {
 
 	$scope.user = $stateParams.user;
 	// $scope.peer = $stateParams.peer;
@@ -74,6 +74,29 @@ app.controller('MessengerController', function ($scope, $stateParams, socket, pe
 	});
 
 	// Conversations operations
+	
+	var displayUsersModal = function(callback) {
+		var modalInstance = $modal.open({
+	      templateUrl: '../../views/groupModal.html',
+	      controller: 'GroupModalController',
+	      resolve: {
+	        directory: function () {
+	        	return $scope.directory;
+	        }
+	      }
+	    });
+
+	    modalInstance.result.then(function (selected) {
+	    	callback(selected);
+	    });
+	};
+	
+	$scope.startGroupConversation = function(){
+		displayUsersModal(function(selected){
+			console.log('selected');
+			console.log(selected);
+		});
+	};
 
 	$scope.createConversation = function(user){
 		var dataConnection = peer.connect(user.peerId);
