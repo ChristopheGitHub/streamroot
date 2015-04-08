@@ -4,13 +4,13 @@
 <div class="modal-body">
     <ul>
         <li ng-repeat="user in users">
-            <a ng-click="select(user)">{{ user }}</a>
+            <a ng-click="select(user)">{{ user.username }}</a>
         </li>
     </ul>
     Selected: 
     <ul>
     	<li ng-repeat="user in selected">
-    		<b ng-click="unSelect(user)">{{ user }}</b>
+    		<b ng-click="unSelect(user)">{{ user.username }}</b>
     	</li>
     </ul>
 </div>

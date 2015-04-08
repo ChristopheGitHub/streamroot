@@ -5,7 +5,7 @@ angular.module('chat').controller('GroupModalController', function ($scope, $mod
   $scope.users = [];
   angular.forEach($scope.directory, function(person){
     if (person.banned === 'false') {
-      $scope.users.push(person.username);
+      $scope.users.push(person);
     }
   });
 

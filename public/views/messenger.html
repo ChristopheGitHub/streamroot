@@ -16,7 +16,7 @@
                 </li>
                 <li ng-repeat="user in directory | PeopleFilter:{name:query, banned: 'false'}"
                     class="list-group-item">
-                    <span ng-click="createConversation(user)">> {{ user.username }}</span>
+                    <span ng-click="createConversation([user])">> {{ user.username }}</span>
                     <button class="btn btn-xs pull-right" ng-click="switchBan(user)">
                         <span>Ban</span>
                     </button>
@@ -42,7 +42,7 @@
                     <tabset justified="true">
                         <tab ng-repeat="conv in conversations" heading="{{ conv.title }}">
                             <div class="messages">
-                                <div ng-repeat="message in conv.messages" class="message"
+                                <div ng-repeat="message in conv.messages track by $index" class="message"
                                     ng-class="{'message.others': message.author !== user.username}">
                                   <h4>{{message.text}}</h4>
                                   <span>{{message.author}}</span>
@@ -60,4 +60,6 @@
             </div>
         </div>
         <!-- /#page-content-wrapper -->
+
+
     </div>

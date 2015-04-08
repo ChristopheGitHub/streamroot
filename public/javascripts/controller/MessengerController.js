@@ -1,4 +1,8 @@
+'use strict';
+
 app.controller('MessengerController', function ($scope, $stateParams, $modal, socket, peer) {
+
+	//$scope.peer = $stateParams.peer;
 
 	$scope.user = $stateParams.user;
 	// $scope.peer = $stateParams.peer;
@@ -11,9 +15,7 @@ app.controller('MessengerController', function ($scope, $stateParams, $modal, so
 
 	console.log($scope.user.username);	
 	console.log('ancien id: ' + $scope.user.peerId);
-	console.log('controller peeer id ');
 	console.log(peer);
-	console.log($scope.peer);
 
 	var setBanned = function(){
 		angular.forEach($scope.directory, function(user){
@@ -46,7 +48,7 @@ app.controller('MessengerController', function ($scope, $stateParams, $modal, so
 		var res = "";
 		angular.forEach($scope.directory, function(user){
 			if (user.peerId === id){
-				res = user.username;
+				res = user;
 			}
 		});
 		return res;
@@ -93,51 +95,161 @@ app.controller('MessengerController', function ($scope, $stateParams, $modal, so
 	
 	$scope.startGroupConversation = function(){
 		displayUsersModal(function(selected){
-			console.log('selected');
-			console.log(selected);
+			createGroupConversation(selected);
 		});
 	};
 
-	$scope.createConversation = function(user){
-		var dataConnection = peer.connect(user.peerId);
+	var createGroupConversation = function(usersArray) {
+		$scope.createConversation(usersArray);
+	};
+
+	var createConvTitle = function (usersArray) {
+		if (usersArray.length === 1) {
+			return usersArray[0].username;
+		} else {
+			var convTitle = '';
+			for (var i = 0; i < usersArray.length; i++) {
+				convTitle = (i===usersArray.length-1) ? convTitle + (usersArray[i].username) : (usersArray[i].username) + " - ";
+			}
+			return convTitle;
+		}
+	};
+
+	$scope.createConversation = function(usersArray){
+		// Create conversation title
+		var conversationTitle = createConvTitle(usersArray);
+		var header = Date.now();
+
+		// Create conversation object
 		var conversation = {
-			title: user.username,
-			dataConnection: dataConnection,
+			title: conversationTitle,
+			header: header,
+			members: usersArray,
+			dataConnection: [],
 			messages: []
 		};
 
+		// Push conversation in conversation collections, displays it
 		$scope.conversations.push(conversation);
+		
+		// Connect to each members of the conversation and listen.
+		usersArray.map(function(user){
 
-		dataConnection.on('data', function(message){
-			conversation.messages.push(message);
-			// $scope.$apply($scope.conversations);
+			// Connect to the member
+			var dataConnection = peer.connect(user.peerId);
+
+			// Save the connection
+			conversation.dataConnection.push(dataConnection);
+
+			// Acknowledge this user of the conversation and its members
+			console.log('envoi des paramtres');
+			dataConnection.on('open', function() {
+				var data = {
+					type: 'new conversation',
+					members: usersArray,
+					header: header
+				};
+				this.send(data);
+			});
+
+			// Listen for messages
+			dataConnection.on('data', function(message){
+				$scope.$apply(conversation.messages.push(message));
+			});
 		});
+
 	};
 
 	peer.on('connection', function(connection){
-		var user = getUserFromPeerId(connection.peer);
-		var conversation = {
-			title: user,
-			dataConnection: connection,
-			messages: []
-		};
+		var sender = getUserFromPeerId(connection.peer);
 
-		$scope.conversations.push(conversation);
+		console.log('fonction connection');
 		
-		connection.on('data', function(message){
-			conversation.messages.push(message);
-			$scope.$apply($scope.conversations);
+		connection.on('open', function(){
+			
+			connection.on('data', function(data){
+				
+				if (data.type === 'new conversation') {
+
+					var members = data.members; 
+
+					// Set the correct members for this peers point of view;
+					members.push(sender);	// Add the guy who send the new conversation msg
+					var index = null;
+					// remove it self
+					for (var i = 0; i < members.length; i++) {
+						index = (members[i].username == $scope.user.username) ? i : index;
+					}
+					members.splice(index, 1);
+
+					// Create conversation title
+					var conversationTitle = createConvTitle(members);
+					console.log('conversationTitle');
+					console.log(conversationTitle);
+
+					var conversation = {
+						title: conversationTitle,
+						header: data.header,
+						members: members,
+						dataConnection: [],
+						messages: []
+					};
+
+					// Push conversation in conversation collections,
+					// therefore displaying it
+					$scope.$apply($scope.conversations.push(conversation));
+
+					// Save the connection
+					conversation.dataConnection.push(connection);
+
+					// New array without the sender of the 'new conversation event'
+					// We're already listening him.
+					var members2 = [];
+					for (var j = 0; j < members.length; j++) {
+						if(members[j].username !== sender.username){
+							members2.push(members[j]);
+						}
+					}
+
+					// Connect to each members of the conversation and listen.
+					members2.map(function(user){
+						// Connect to the member
+						var dataConnection = peer.connect(user.peerId);
+
+						// Save the connection
+						conversation.dataConnection.push(dataConnection);
+					});
+
+				} else {
+					// When type is 'message'
+					angular.forEach($scope.conversations, function(conversation){
+						if(conversation.header === data.header){
+							$scope.$apply((conversation.messages.push(data)));
+						}						
+					});
+				}
+			});
 		});
 	});
 
 	$scope.send = function(){
 		var message = {
+			type: 'message',
+			header: this.conv.header,
 			author: $scope.user.username,
 			text: this.newMessage
 		};
-		this.conv.dataConnection.send(message);
+
+		// Send to each member of the conversation the message
+		this.conv.dataConnection.map(function (connection) {
+			connection.send(message);
+			console.log('Sending to ' + connection.peer + ' the message ' + message.text);
+		});
+
+		// Add the message in the conversation (displays it)
 		this.conv.messages.push(message);
 		this.newMessage = "";
+		// console.log(this.conv);
 	};
 
 });

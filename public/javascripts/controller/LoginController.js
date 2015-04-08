@@ -1,6 +1,6 @@
 app.controller('LoginController', function ($scope, $state, socket, peer) {
 
-	// $scope.peer = new Peer({host: 'localhost', port: 8000, path: '/peerjs'});
+	//var peer = new Peer({host: 'localhost', port: 8000, path: '/peerjs'});
 
 	$scope.user = {
 		username: "",
@@ -23,8 +23,8 @@ app.controller('LoginController', function ($scope, $state, socket, peer) {
 
 	socket.on('serverUsernameSaved', function () {
 		console.log('serverUsernameSaved');
-		// $state.go('messenger', {user: $scope.user, peer: $scope.peer});
-		$state.go('messenger', {user: $scope.user});
+		//$state.go('messenger', {user: $scope.user, peer: peer});
+		 $state.go('messenger', {user: $scope.user});
 	});
 
 	socket.on('serverUsernameAlreadyTaken', function () {
