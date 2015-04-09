@@ -8,6 +8,11 @@ var Users = function () {
 	this._users = {};
 };
 
+Users.prototype.delUser = function(username, callback) {
+	delete this._users[username];
+	return callback(null);
+};
+
 Users.prototype.addUser = function (data, callback) {	
 	if (this.isLoginTaken(data.login)) {
 		return callback(new Error('loginTaken'));

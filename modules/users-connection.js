@@ -44,11 +44,13 @@ IoModule.prototype._initialize = function () {
         });
 
         socket.on('disconnect', function(){
-            var message = {
-                directory: self._users.getList(),
-                username: username
-            };
-            io.sockets.emit('serverUserDisconnection', message);
+            self._users.delUser(username, function () {
+                var message = {
+                    directory: self._users.getList(),
+                    username: username
+                };
+                io.sockets.emit('serverUserDisconnection', message);
+            });
         });
     });
 };

@@ -66,7 +66,7 @@ app.controller('MessengerController', function ($scope, $stateParams, $modal, so
 	});
 
 	socket.on('serverUserConnection', function (data) {
-		console.log('newUser' + data.newUser);
+		console.log('newUser' + data.username);
 		setDirectory(data.directory);
 	});
 
