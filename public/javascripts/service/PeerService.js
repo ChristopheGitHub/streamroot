@@ -1,5 +1,5 @@
 app.factory('peer', function ($rootScope) {
-  var peer = new Peer({host: 'localhost', port: 8000, path: '/peerjs'});
+  var peer = new Peer({host: 'sd-44839.dedibox.fr', port: 8001, path: '/peerjs'});
   return {
     on: function (eventName, callback) {
       peer.on(eventName, function () {  

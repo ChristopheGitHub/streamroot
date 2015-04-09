@@ -17,10 +17,10 @@ app.use(cookieParser());
 
 app.use(serveStatic('public', {}));
 
-var server = app.listen(9000);
+var server = app.listen(9001);
 
 
-var serverPeer = PeerServer({port: 8000, path: '/peerjs'});
+var serverPeer = PeerServer({port: 8001, path: '/peerjs'});
 
 app.get('*', function (req, res, next) {
   res.sendfile(__dirname + '/public/views/index.html');
