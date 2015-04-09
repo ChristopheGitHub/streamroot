@@ -73,9 +73,33 @@ app.controller('MessengerController', function ($scope, $stateParams, $modal, so
 	socket.on('serverUserDisconnection', function (data) {
 		console.log('user : ' + data.username + ' disconnected.');
 		setDirectory(data.directory);
+		closeConversationsWithDisconnectedUSer(data.username);
 	});
 
 	// Conversations operations
+	
+	var closeConversationsWithDisconnectedUSer = function(username) {
+		for(var i = 0; i < $scope.conversations.length; i++ ) {
+			for(var j = 0; j < $scope.conversations[i].members.length; j++) {
+				if ($scope.conversations[i].members[j].username === username) {
+					// If its a dual conv, I delete the conv, otherwise, just delete the member
+					if ($scope.conversations[i].members.length === 1) {
+						delete $scope.conversations[i];
+					}	else {
+						console.log('delete ' + $scope.conversations[i].members[j].username + ' from conv');
+						var message = {
+							type: 'message',
+							header: $scope.conversations[i].header,
+							author: 'system',
+							text: $scope.conversations[i].members[j].username + ' disconneted'
+						};
+						$scope.conversations[i].messages.push(message);
+						delete $scope.conversations[i].members[j];
+					}
+				}
+			}
+		}
+	};
 	
 	var displayUsersModal = function(callback) {
 		var modalInstance = $modal.open({
