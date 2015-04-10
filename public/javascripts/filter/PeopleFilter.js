@@ -1,3 +1,5 @@
+'use strict';
+
 // Filter needed because of the structure of directory, beeing a map and not an array
 angular.module('chat').filter('PeopleFilter', function(){
 	var compare = function(stra, strb){

@@ -1,3 +1,5 @@
+'use strict';
+
 app.controller('LoginController', function ($scope, $state, socket, peer) {
 
 	//var peer = new Peer({host: 'localhost', port: 8000, path: '/peerjs'});

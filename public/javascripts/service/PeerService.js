@@ -1,3 +1,5 @@
+'use strict';
+
 app.factory('peer', function ($rootScope) {
   var peer = new Peer({host: 'localhost', port: 8000, path: '/peerjs'});
   return {

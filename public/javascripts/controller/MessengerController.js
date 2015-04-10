@@ -2,12 +2,12 @@
 
 app.controller('MessengerController', function ($scope, $stateParams, $modal, socket, peer) {
 
-	$scope.user          = $stateParams.user;
-	$scope.query         = "";
-	$scope.directory     = null;
-	$scope.conversations = [];
-	var banned           = []; // To remember who's banned when the directory is updated
-	var hidden           = []; // To remember who's hidden when the directory is updated
+	$scope.user          = $stateParams.user;	
+	$scope.query         = "";					// Query var for the search bar.
+	$scope.directory     = null; 				// Directory of users online, not matter if people are banned / hidden.
+	$scope.conversations = []; 					// All the conversations.
+	var banned           = []; 					// To remember who's banned when the directory is updated.
+	var hidden           = []; 					// To remember who's hidden when the directory is updated.
 
 	console.log($scope.user.username);	
 	console.log('ancien id: ' + $scope.user.peerId);

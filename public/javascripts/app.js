@@ -1,3 +1,5 @@
+'use strict';
+
 var app = angular.module('chat', ['ui.router', 'ui.bootstrap']);
 
 app.config(function ($stateProvider, $urlRouterProvider) {
