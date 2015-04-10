@@ -39,7 +39,7 @@ I didn't know why, so I used another solution, less elegant, by having just one 
 * Account feature
 * Persistence of the messages and users, using mongodb.
 * Encryption of the messages, for data circulates in plain text.
-* Display of images and videos in the chat
+* Display of images and videos in the chat : I would probably do it using a regex to detect if the message contains a link to an image or a video, and then display it with a CSS / angular module activated by a ng-if.
 * A real banishment feature
 * Error handling, for disconnection, message lost etc.
 
