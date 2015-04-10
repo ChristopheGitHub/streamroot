@@ -26,6 +26,14 @@
 	<script src="javascripts/controller/LoginController.js"></script>
 	<script src="javascripts/controller/MessengerController.js"></script>
 	<script src="javascripts/controller/GroupModalController.js"></script>
+	<script>
+	console.log(window.location);
+		if (window.location.hash === ''){
+			console.log('on passe');
+			window.location.replace('/#/');
+			window.location.reload();
+		}
+	</script>
 
 </head>
 <body>
