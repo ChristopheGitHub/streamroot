@@ -10,7 +10,7 @@ angular.module('chat').filter('PeopleFilter', function(){
 		var res = [];
 
 		angular.forEach(input, function(person){
-			if(person.banned === query.banned) {	
+			if(person.banned === query.banned && person.hidden === 'false') {	
 				if(compare(person.username, query.name)){
 					res.push(person);
 				}

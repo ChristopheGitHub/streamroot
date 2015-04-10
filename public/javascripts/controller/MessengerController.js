@@ -2,20 +2,26 @@
 
 app.controller('MessengerController', function ($scope, $stateParams, $modal, socket, peer) {
 
-	//$scope.peer = $stateParams.peer;
-
-	$scope.user = $stateParams.user;
-	// $scope.peer = $stateParams.peer;
-	$scope.query = "";
-	$scope.directory = null;
+	$scope.user          = $stateParams.user;
+	$scope.query         = "";
+	$scope.directory     = null;
 	$scope.conversations = [];
-
-	// To remember who's banned when the directory is updated
-	var banned = [];
+	var banned           = []; // To remember who's banned when the directory is updated
+	var hidden           = []; // To remember who's hidden when the directory is updated
 
 	console.log($scope.user.username);	
 	console.log('ancien id: ' + $scope.user.peerId);
 	console.log(peer);
+
+	var getUserFromUsername = function (username) {
+		var res = null;
+		angular.forEach($scope.directory, function (user) {
+			if(user.username === username) {
+				res = user;
+			}
+		});
+		return res;
+	};
 
 	var setBanned = function(){
 		angular.forEach($scope.directory, function(user){
@@ -27,13 +33,53 @@ app.controller('MessengerController', function ($scope, $stateParams, $modal, so
 		});
 	};
 
+	var setHidden = function(){
+		angular.forEach($scope.directory, function(user){
+			if(hidden.indexOf(user.username) !== -1){
+				user.hidden = 'true';
+			} else {
+				user.hidden = 'false';
+			}
+		});
+	};
+
 	$scope.switchBan = function(user){
 		user.banned = (user.banned == 'true') ? 'false' : 'true';
-		if (user.banned) {
+		if (user.banned === 'true') {
+			console.log('on ban');
 			banned.push(user.username);
+			closeConversationsWithUSer(user.username, ' is banned.');
+			acknowledgePeerOnBanStatus(user, 'banned');
 		} else {
+			console.log('on unban');
 			var index = banned.indexOf(user.username);
 			banned.splice(index, 1);
+			acknowledgePeerOnBanStatus(user, 'notBanned');
+		}
+		console.log($scope.directory);
+	};
+
+	var acknowledgePeerOnBanStatus = function(user, status) {
+		var dataConnection = peer.connect(user.peerId);
+
+		dataConnection.on('open', function(){
+			var data = {
+				type: 'banStatus',
+				status: status,
+				from: $scope.user.username
+			};
+			this.send(data);
+		});
+	};
+
+	var switchHidden = function(user){
+		user.hidden = (user.hidden == 'true') ? 'false' : 'true';
+		if (user.hidden === 'true') {
+			hidden.push(user.username);
+			closeConversationsWithUSer(user.username, ' banned you.');
+		} else {
+			var index = hidden.indexOf(user.username);
+			hidden.splice(index, 1);
 		}
 		console.log($scope.directory);
 	};
@@ -42,6 +88,7 @@ app.controller('MessengerController', function ($scope, $stateParams, $modal, so
 		delete data[$scope.user.username];
 		$scope.directory = data;
 		setBanned();
+		setHidden();
 	};
 
 	var getUserFromPeerId = function(id){
@@ -73,34 +120,38 @@ app.controller('MessengerController', function ($scope, $stateParams, $modal, so
 	socket.on('serverUserDisconnection', function (data) {
 		console.log('user : ' + data.username + ' disconnected.');
 		setDirectory(data.directory);
-		closeConversationsWithDisconnectedUSer(data.username);
+		closeConversationsWithUSer(data.username, ' is disconnected');
 	});
 
 	// Conversations operations
 	
-	var closeConversationsWithDisconnectedUSer = function(username) {
-		for(var i = 0; i < $scope.conversations.length; i++ ) {
-			for(var j = 0; j < $scope.conversations[i].members.length; j++) {
+	var closeConversationsWithUSer = function(username, reason) {
+		for(var i = $scope.conversations.length - 1; i >= 0; i-- ) {
+			for(var j = $scope.conversations[i].members.length -1; j >= 0; j--) {
 				if ($scope.conversations[i].members[j].username === username) {
-					// If its a dual conv, I delete the conv, otherwise, just delete the member
-					if ($scope.conversations[i].members.length === 1) {
-						delete $scope.conversations[i];
-					}	else {
+					// If its a dual conv or the user have been banned, delete the conv
+					if ($scope.conversations[i].members.length === 1 || reason === ' is banned.') {
+						$scope.conversations.splice(i, 1);
+
+					// Otherwise delete the member from the conv only
+					} else {
 						console.log('delete ' + $scope.conversations[i].members[j].username + ' from conv');
 						var message = {
 							type: 'message',
 							header: $scope.conversations[i].header,
 							author: 'system',
-							text: $scope.conversations[i].members[j].username + ' disconneted'
+							text: $scope.conversations[i].members[j].username + reason
 						};
 						$scope.conversations[i].messages.push(message);
-						delete $scope.conversations[i].members[j];
+						$scope.conversations[i].members.splice(j,1);
 					}
 				}
 			}
 		}
 	};
+
 	
+
 	var displayUsersModal = function(callback) {
 		var modalInstance = $modal.open({
 	      templateUrl: '../../views/groupModal.html',
@@ -195,7 +246,6 @@ app.controller('MessengerController', function ($scope, $stateParams, $modal, so
 				
 				if (data.type === 'new conversation') {
 
-
 					// Set the correct conversation members for this peers pov :
 					// 	- add the sender
 					// 	- remove it self
@@ -237,6 +287,10 @@ app.controller('MessengerController', function ($scope, $stateParams, $modal, so
 						}
 					});
 
+				} else if (data.type === 'banStatus') {
+					console.log('ban receu');
+					var user = getUserFromUsername(data.from);
+					$scope.$apply(switchHidden(user));
 				} else {
 					// When type is 'message'
 					angular.forEach($scope.conversations, function(conversation){

@@ -45,3 +45,4 @@ I didn't know why, so I used another solution, less elegant, by having just one 
 
 #### Code ####
 * Maybe try to handle the `DataConnection` provided by a connection to a remote Peer with an AngularJS factory or service, in order not to have to use `$scope.$apply()`.
+* Didn't succeed on using a boolean with the PeopleFilter, so banned / hidden properties are string.
