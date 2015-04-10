@@ -125,6 +125,20 @@ app.controller('MessengerController', function ($scope, $stateParams, $modal, so
 
 	// Conversations operations
 	
+	// Close the conversation and send the members of the conversation a leaving message
+	$scope.closeConversation = function(){
+		var conversation = this.conv;
+		var message = {
+			type: 'leave',
+			from: $scope.user.username
+		};
+		console.log(this);
+		conversation.dataConnection.map(function (connection) {
+			connection.send(message);
+		});
+		$scope.conversations.splice($scope.conversations.indexOf(conversation), 1);
+	};
+	
 	var closeConversationsWithUSer = function(username, reason) {
 		for(var i = $scope.conversations.length - 1; i >= 0; i-- ) {
 			for(var j = $scope.conversations[i].members.length -1; j >= 0; j--) {
@@ -291,6 +305,9 @@ app.controller('MessengerController', function ($scope, $stateParams, $modal, so
 					console.log('ban receu');
 					var user = getUserFromUsername(data.from);
 					$scope.$apply(switchHidden(user));
+				} else if (data.type === 'leave') {
+					console.log('leave');
+					$scope.$apply(closeConversationsWithUSer(data.from, ' leaved.'));
 				} else {
 					// When type is 'message'
 					angular.forEach($scope.conversations, function(conversation){

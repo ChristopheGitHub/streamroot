@@ -33,6 +33,9 @@ though the DataConnection objects were created.
 
 I didn't know why, so I used another solution, less elegant, by having just one listener and identify the conversation using a header.  
 
+##### Notifications #####
+I tried to add notifications using angularjs-toastr and angular-ui-notification, but their CSS was not working.
+
 
 ### Areas for improvement  ###
 #### Features ####

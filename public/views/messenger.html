@@ -40,7 +40,13 @@
             <div class="container-fluid">
                 <div class="row">
                     <tabset justified="true">
-                        <tab ng-repeat="conv in conversations" heading="{{ conv.title }}">
+                        <tab ng-repeat="conv in conversations">
+                            <tab-heading>
+                                {{ conv.title }}
+                                <button class="btn btn-xs pull-right" ng-click="closeConversation()">
+                                    <span>Close</span>
+                                </button>
+                            </tab-heading>
                             <div class="messages">
                                 <div ng-repeat="message in conv.messages track by $index" class="message"
                                     ng-class="{'message.others': message.author !== user.username}">
