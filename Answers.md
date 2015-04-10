@@ -1,4 +1,11 @@
 ### Principle and assumptions ###
+
+#### Socket.io / Peer.js ####
+**Socket.io** is used to keep a link with the server. Directory updates, when a user connect/disconnect come from there.
+
+
+**Peer.js** is used to talk with other peers only.
+
 #### Messenger ####
 **About the group conversation :** when inviting a third person to a conversation, either we gave this person the conversation history, or we create a second conversation.
 
